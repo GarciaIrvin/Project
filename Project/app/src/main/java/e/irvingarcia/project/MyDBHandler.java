@@ -24,7 +24,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         String CREATE_USER_TABLE = "CREATE TABLE " +
                 TABLE_USERS + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY," + COLUMN_USERNAME
-                + " TEXT," + COLUMN_PASSOWRD + " STRING"+")";
+                + " TEXT," + COLUMN_PASSOWRD + " TEXT2,"+ COLUMN_FIRST+ " TEXT3" +")";
         db.execSQL(CREATE_USER_TABLE);
 
 //        String CREATE_ADMIN_TABLE = "CREATE TABLE " +
@@ -44,7 +44,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         ContentValues values=new ContentValues();
         values.put(COLUMN_USERNAME,user.getUser());
         values.put(COLUMN_PASSOWRD,user.getPass());
-        //values.put(COLUMN_FIRST, user.getFirst());
+        values.put(COLUMN_FIRST, user.getFirst());
         //values.put(COLUMN_LAST,user.getLast());
 
         db.insert(TABLE_USERS,null,values);
@@ -55,7 +55,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         ContentValues values=new ContentValues();
         values.put(COLUMN_USERNAME,admin.getUsername());
         values.put(COLUMN_PASSOWRD,admin.getPassword());
-        //values.put(COLUMN_FIRST, user.getFirst());
+        values.put(COLUMN_FIRST, admin.getFirstName());
         //values.put(COLUMN_LAST,user.getLast());
 
         db.insert(TABLE_USERS,null,values);
@@ -66,7 +66,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db= this.getReadableDatabase();
         String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user+ "\"";
         Cursor cursor= db.rawQuery(query,null);
-        //Users users=new Users();
+        Users users=new Users();
         if(cursor.moveToFirst()){
             String userRetrieve=(cursor.getString(1));
             String userPassword=cursor.getString(2);
@@ -81,6 +81,24 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
         db.close();
         return true;
+    }
+    public Users getProfile(String user, String pass){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        Users users=new Users();
+        if(cursor.moveToFirst()){
+            users.setUser(cursor.getString(1));
+            users.setPass(cursor.getString(2));
+            users.setFirst(cursor.getString(3));
+            cursor.close();
+        }
+        else{
+            users=null;
+        }
+
+        db.close();
+        return users;
     }
 
 }

@@ -3,9 +3,11 @@ package e.irvingarcia.project;
 public class Admin {
     String username;
     String password;
-    public Admin(String user,String pass){
+    String firstName;
+    public Admin(String user,String pass,String first){
         username=user;
         password=pass;
+        firstName=first;
     }
 
     public String getPassword() {
@@ -14,5 +16,9 @@ public class Admin {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getFirstName() {
+        return firstName;
     }
 }

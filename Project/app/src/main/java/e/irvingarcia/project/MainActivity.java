@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         passBox=(EditText) findViewById(R.id.editPassLogin);
         viewStatus=(TextView) findViewById(R.id.status);
 
-        Admin admin = new Admin("admin","admin");
+        Admin admin = new Admin("admin","admin","Admin");
 
         // TODO: add to database
         MyDBHandler dbHandler= new MyDBHandler(this);
@@ -41,8 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (flag==true) {
             viewStatus.setText("Nice");
+            Users temp=dbHandler.getProfile(userBox.getText().toString(),passBox.getText().toString());
             Intent intent= new Intent(getApplicationContext(),Welcome.class);
-            intent.putExtra("users",userBox.getText().toString());
+            intent.putExtra("users",temp.getFirst());
             startActivityForResult(intent,0);
         } else {
             viewStatus.setText("No Match Found");

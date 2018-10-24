@@ -18,7 +18,7 @@ public class Users {
         this.postal=postal;
         this.city=city;
     }
-
+    public Users(){}
 
     public void setUser(String user) {
         this.user = user;
@@ -26,6 +26,10 @@ public class Users {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public void setFirst(String first) {
+        this.first = first;
     }
 
     public String getFirst() {
