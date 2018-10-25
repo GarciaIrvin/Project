@@ -8,8 +8,9 @@ public class Users {
     private String city;
     private String street;
     private String postal;
+    private String role;
 
-    public  Users(String user,String pass,String first,String last, String street, String city,String postal){
+    public  Users(String user,String pass,String first,String last, String street, String city,String postal, String role){
         this.user=user;
         this.pass=pass;
         this.first=first;
@@ -17,6 +18,7 @@ public class Users {
         this.street=street;
         this.postal=postal;
         this.city=city;
+        this.role=role;
     }
     public Users(){}
 
@@ -57,5 +59,13 @@ public class Users {
     }
     public String getCity(){
         return city;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

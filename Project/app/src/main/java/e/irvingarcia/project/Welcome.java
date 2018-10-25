@@ -13,8 +13,9 @@ public class Welcome extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Bundle extras=getIntent().getExtras();
         String users=extras.getString("users");
+        String role=extras.getString("role");
         setContentView(R.layout.activity_welcome);
         welcomeView=(TextView)findViewById(R.id.firstName);
-        welcomeView.setText("WELCOME "+users);
+        welcomeView.setText("WELCOME "+users+" you logged in as "+ role);
     }
 }

@@ -21,12 +21,16 @@ public class MainActivity extends AppCompatActivity {
         passBox=(EditText) findViewById(R.id.editPassLogin);
         viewStatus=(TextView) findViewById(R.id.status);
 
-        Admin admin = new Admin("admin","admin","Admin");
+        MyDBHandler dbHandler=new MyDBHandler(this);
+        boolean flag=dbHandler.findUser("admin","admin");
 
-        // TODO: add to database
-        MyDBHandler dbHandler= new MyDBHandler(this);
-        dbHandler.addAdmin(admin);
-        dbHandler.close();
+        if(!flag) {
+            Admin admin = new Admin("admin", "admin", "Admin");
+
+            // TODO: add to database
+            dbHandler.addAdmin(admin);
+            dbHandler.close();
+        }
     }
     public void createUser(View view){
         Intent intent= new Intent(getApplicationContext(),UserCreate.class);
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             Users temp=dbHandler.getProfile(userBox.getText().toString(),passBox.getText().toString());
             Intent intent= new Intent(getApplicationContext(),Welcome.class);
             intent.putExtra("users",temp.getFirst());
+            intent.putExtra("role",temp.getRole());
             startActivityForResult(intent,0);
         } else {
             viewStatus.setText("No Match Found");

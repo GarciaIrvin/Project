@@ -9,9 +9,11 @@ import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.Button;
+import android.widget.Spinner;
 
 public class UserCreate extends AppCompatActivity {
     EditText userBox;
@@ -22,6 +24,7 @@ public class UserCreate extends AppCompatActivity {
     EditText cityBox;
     EditText postalBox;
     Button buttonCreate;
+    Spinner dropDown;
 
 
     @Override
@@ -44,6 +47,14 @@ public class UserCreate extends AppCompatActivity {
         cityBox.addTextChangedListener(watcher);
         postalBox.addTextChangedListener(watcher);
         buttonCreate.setEnabled(false);
+        dropDown = findViewById(R.id.spinner);
+
+        String[] items = new String[]{"Home Owner", "Service Provider"};
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
+
+        dropDown.setAdapter(adapter);
     }
 
     private final TextWatcher watcher = new TextWatcher() {
@@ -69,6 +80,37 @@ public class UserCreate extends AppCompatActivity {
 
 
 
+//    public void newUser (View view) {
+//        String user=userBox.getText().toString();
+//        String pass=passBox.getText().toString();
+//        String first=firstBox.getText().toString();
+//        String last=lastBox.getText().toString();
+//        String street=streetBox.getText().toString();
+//        String city=cityBox.getText().toString();
+//        String postal=postalBox.getText().toString();
+//
+//
+//        Users newUsers = new Users(user,pass,first,last,street,city,postal);
+//
+//        // TODO: add to database
+//        MyDBHandler dbHandler= new MyDBHandler(this);
+//        dbHandler.addUser(newUsers);
+//        dbHandler.close();
+//
+//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+//        LayoutInflater inflater = getLayoutInflater();
+//        final View dialogView = inflater.inflate(R.layout.update_dialog, null);
+//        dialogBuilder.setView(dialogView);
+//        final AlertDialog b = dialogBuilder.create();
+//        b.show();
+//        final Button buttonBack = (Button) dialogView.findViewById(R.id.goBack);
+//        buttonBack.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                finish();
+//            }
+//        });
+//    }
     public void newUser (View view) {
         String user=userBox.getText().toString();
         String pass=passBox.getText().toString();
@@ -77,9 +119,9 @@ public class UserCreate extends AppCompatActivity {
         String street=streetBox.getText().toString();
         String city=cityBox.getText().toString();
         String postal=postalBox.getText().toString();
+        String role=dropDown.getSelectedItem().toString();
 
-
-        Users newUsers = new Users(user,pass,first,last,street,city,postal);
+        Users newUsers = new Users(user,pass,first,last,street,city,postal, role);
 
         // TODO: add to database
         MyDBHandler dbHandler= new MyDBHandler(this);

@@ -14,6 +14,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_USERNAME = "username";
     public static final String COLUMN_PASSOWRD = "password";
     public static final String COLUMN_FIRST = "first";
+    public static final String COLUMN_ROLE = "role";
     public static final String COLUMN_LAST = "last";
 
     public MyDBHandler(Context context) {
@@ -24,7 +25,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         String CREATE_USER_TABLE = "CREATE TABLE " +
                 TABLE_USERS + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY," + COLUMN_USERNAME
-                + " TEXT," + COLUMN_PASSOWRD + " TEXT2,"+ COLUMN_FIRST+ " TEXT3" +")";
+                + " TEXT," + COLUMN_PASSOWRD + " TEXT2,"+ COLUMN_FIRST+ " TEXT3," +COLUMN_ROLE+ " TEXT4"+ ")";
         db.execSQL(CREATE_USER_TABLE);
 
 //        String CREATE_ADMIN_TABLE = "CREATE TABLE " +
@@ -45,7 +46,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME,user.getUser());
         values.put(COLUMN_PASSOWRD,user.getPass());
         values.put(COLUMN_FIRST, user.getFirst());
-        //values.put(COLUMN_LAST,user.getLast());
+        values.put(COLUMN_ROLE,user.getRole());
 
         db.insert(TABLE_USERS,null,values);
         db.close();
@@ -56,6 +57,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME,admin.getUsername());
         values.put(COLUMN_PASSOWRD,admin.getPassword());
         values.put(COLUMN_FIRST, admin.getFirstName());
+        values.put(COLUMN_ROLE, "Admin");
         //values.put(COLUMN_LAST,user.getLast());
 
         db.insert(TABLE_USERS,null,values);
@@ -91,6 +93,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
             users.setUser(cursor.getString(1));
             users.setPass(cursor.getString(2));
             users.setFirst(cursor.getString(3));
+            users.setRole(cursor.getString(4));
             cursor.close();
         }
         else{
