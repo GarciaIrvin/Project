@@ -14,4 +14,13 @@
     <string name="create">Create Account</string>
     <string name="success">Your Account Has Been Successfuly Created!</string>
     <string name="back">Back to Login</string>
+    <string name="textAddService">Add Service</string>
+    <string name="hintAdd">Add Service</string>
+    <string name="btnAdd">ADD</string>
+    <string name="textEditService">Edit Service</string>
+    <string name="textServiceName">Service Name</string>
+    <string name="textFind">Find Service</string>
+    <string name="textDelete">Delete Service</string>
+    <string name="btnDelete">Delete</string>
+    <string name="textHourly">Hourly Rate</string>
 </resources>

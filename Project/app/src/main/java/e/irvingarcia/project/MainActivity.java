@@ -29,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
             // TODO: add to database
             dbHandler.addAdmin(admin);
-            dbHandler.close();
+            //dbHandler.close();
         }
+        dbHandler.close();
     }
     public void createUser(View view){
         Intent intent= new Intent(getApplicationContext(),UserCreate.class);
@@ -46,10 +47,12 @@ public class MainActivity extends AppCompatActivity {
         if (flag==true) {
             viewStatus.setText("Nice");
             Users temp=dbHandler.getProfile(userBox.getText().toString(),passBox.getText().toString());
-            Intent intent= new Intent(getApplicationContext(),Welcome.class);
-            intent.putExtra("users",temp.getFirst());
-            intent.putExtra("role",temp.getRole());
-            startActivityForResult(intent,0);
+            if(temp.getRole().equals("Admin")) {
+                Intent intent = new Intent(getApplicationContext(), Welcome.class);
+                intent.putExtra("users", temp.getFirst());
+                intent.putExtra("role", temp.getRole());
+                startActivityForResult(intent, 0);
+            }
         } else {
             viewStatus.setText("No Match Found");
         }
