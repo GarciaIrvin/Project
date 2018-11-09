@@ -48,10 +48,17 @@ public class MainActivity extends AppCompatActivity {
             viewStatus.setText("Nice");
             Users temp=dbHandler.getProfile(userBox.getText().toString(),passBox.getText().toString());
             if(temp.getRole().equals("Admin")) {
+                Intent intent = new Intent(getApplicationContext(), ServiceCreation.class);
+                intent.putExtra("users", temp.getFirst());
+                intent.putExtra("role", temp.getRole());
+                startActivityForResult(intent, 0);
+            }
+            else{
                 Intent intent = new Intent(getApplicationContext(), Welcome.class);
                 intent.putExtra("users", temp.getFirst());
                 intent.putExtra("role", temp.getRole());
                 startActivityForResult(intent, 0);
+
             }
         } else {
             viewStatus.setText("No Match Found");
