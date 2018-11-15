@@ -34,6 +34,22 @@ public class Users {
         this.first = first;
     }
 
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setLast(String last) {
+        this.last = last;
+    }
+
+    public void setPostal(String postal) {
+        this.postal = postal;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
     public String getFirst() {
         return first;
     }

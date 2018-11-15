@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".UserCreate" />
         <activity android:name=".Welcome" />
-        <activity android:name=".ServiceCreation"></activity>
+        <activity android:name=".ServiceCreation" />
+        <activity android:name=".ServiceProviderCompletion"></activity>
     </application>
 
 </manifest>

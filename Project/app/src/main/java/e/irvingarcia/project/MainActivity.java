@@ -1,7 +1,6 @@
 package e.irvingarcia.project;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -52,13 +51,23 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("users", temp.getFirst());
                 intent.putExtra("role", temp.getRole());
                 startActivityForResult(intent, 0);
+                dbHandler.close();
+            }
+            else if(temp.getRole().equals("Service Provider")){
+                if(!dbHandler.isServiceCompleted(temp)) {
+                    Intent intent = new Intent(getApplicationContext(), ServiceProviderCompletion.class);
+                    intent.putExtra("users", temp.getUser());
+                    intent.putExtra("pass", temp.getPass());
+                    startActivityForResult(intent, 0);
+                    dbHandler.close();
+                }
             }
             else{
                 Intent intent = new Intent(getApplicationContext(), Welcome.class);
                 intent.putExtra("users", temp.getFirst());
                 intent.putExtra("role", temp.getRole());
                 startActivityForResult(intent, 0);
-
+                dbHandler.close();
             }
         } else {
             viewStatus.setText("No Match Found");

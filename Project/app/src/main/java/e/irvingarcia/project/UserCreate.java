@@ -78,39 +78,6 @@ public class UserCreate extends AppCompatActivity {
     };
 
 
-
-
-//    public void newUser (View view) {
-//        String user=userBox.getText().toString();
-//        String pass=passBox.getText().toString();
-//        String first=firstBox.getText().toString();
-//        String last=lastBox.getText().toString();
-//        String street=streetBox.getText().toString();
-//        String city=cityBox.getText().toString();
-//        String postal=postalBox.getText().toString();
-//
-//
-//        Users newUsers = new Users(user,pass,first,last,street,city,postal);
-//
-//        // TODO: add to database
-//        MyDBHandler dbHandler= new MyDBHandler(this);
-//        dbHandler.addUser(newUsers);
-//        dbHandler.close();
-//
-//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-//        LayoutInflater inflater = getLayoutInflater();
-//        final View dialogView = inflater.inflate(R.layout.update_dialog, null);
-//        dialogBuilder.setView(dialogView);
-//        final AlertDialog b = dialogBuilder.create();
-//        b.show();
-//        final Button buttonBack = (Button) dialogView.findViewById(R.id.goBack);
-//        buttonBack.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                finish();
-//            }
-//        });
-//    }
     public void newUser (View view) {
         String user=userBox.getText().toString();
         String pass=passBox.getText().toString();
@@ -123,9 +90,13 @@ public class UserCreate extends AppCompatActivity {
 
         Users newUsers = new Users(user,pass,first,last,street,city,postal, role);
 
-        // TODO: add to database
+
         MyDBHandler dbHandler= new MyDBHandler(this);
         dbHandler.addUser(newUsers);
+
+        if(role.equals("Service Provider")){
+            dbHandler.addServiceProvider(newUsers);
+        }
         dbHandler.close();
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);

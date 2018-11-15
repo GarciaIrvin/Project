@@ -16,6 +16,13 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_FIRST = "first";
     public static final String COLUMN_ROLE = "role";
     public static final String COLUMN_LAST = "last";
+    public static final String COLUMN_STREET = "street";
+    public static final String COLUMN_POSTAL = "postal";
+    public static final String COLUMN_CITY = "city";
+
+    public static final String TABLE_SERVICE_PROVIDER = "service_provider";
+    public static final String COLUMN_COMPLETED="completed";
+    public static final String COLUMN_USER_ID="user_id";
 
     public static final String TABLE_SERVICE = "services";
     public static final String COLUMN_SERVICE="service";
@@ -31,8 +38,16 @@ public class MyDBHandler extends SQLiteOpenHelper {
         String CREATE_USER_TABLE = "CREATE TABLE " +
                 TABLE_USERS + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY," + COLUMN_USERNAME
-                + " TEXT," + COLUMN_PASSOWRD + " TEXT2,"+ COLUMN_FIRST+ " TEXT3," +COLUMN_ROLE+ " TEXT4"+ ")";
+                + " TEXT," + COLUMN_PASSOWRD + " TEXT2,"+ COLUMN_FIRST+ " TEXT3," + COLUMN_LAST+ " TEXT4,"
+                + COLUMN_STREET+ " TEXT5,"+ COLUMN_POSTAL+ " TEXT6,"+ COLUMN_CITY+ " TEXT7,"
+                +COLUMN_ROLE+ " TEXT8" +")";
         db.execSQL(CREATE_USER_TABLE);
+
+        String CREATE_SERVICE_PROVIDER_TABLE="CREATE TABLE " +
+                TABLE_SERVICE_PROVIDER + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY,"+ COLUMN_COMPLETED+ " TEXT,"+
+                COLUMN_USER_ID+ " INTEGER,"+ " FOREIGN KEY ("+COLUMN_USER_ID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USER_ID+"));";
+        db.execSQL(CREATE_SERVICE_PROVIDER_TABLE);
 
         String CREATE_SERVICE_TABLE = "CREATE TABLE " +
                 TABLE_SERVICE + "("
@@ -44,6 +59,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion,
                           int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SERVICE_PROVIDER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SERVICE);
         onCreate(db);
     }
@@ -53,9 +69,30 @@ public class MyDBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME,user.getUser());
         values.put(COLUMN_PASSOWRD,user.getPass());
         values.put(COLUMN_FIRST, user.getFirst());
+        values.put(COLUMN_LAST,user.getLast());
+        values.put(COLUMN_STREET,user.getStreet());
+        values.put(COLUMN_POSTAL,user.getPostal());
+        values.put(COLUMN_CITY,user.getCity());
         values.put(COLUMN_ROLE,user.getRole());
+        //values.put(COLUMN_COMPLETED, "false");
 
         db.insert(TABLE_USERS,null,values);
+        db.close();
+    }
+
+    public void addServiceProvider(Users user){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user.getUser()+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            int id=(cursor.getInt(0));
+            cursor.close();
+            ContentValues values=new ContentValues();
+            values.put(COLUMN_USER_ID,id);
+            values.put(COLUMN_COMPLETED,"false");
+            db.insert(TABLE_SERVICE_PROVIDER,null,values);
+        }
         db.close();
     }
 
@@ -99,14 +136,9 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
     public void updateService(Service updatedService,Service oldService){
         SQLiteDatabase db= this.getWritableDatabase();
-//        String query="UPDATE" +TABLE_SERVICE +"SET"+ COLUMN_SERVICE+"="+ updatedService.getService()+
-//                "WHERE"+ COLUMN_SERVICE+ "=";
-//        db.execSQL(query);
         ContentValues values=new ContentValues();
         values.put(COLUMN_SERVICE,updatedService.getService());
         values.put(COLUMN_HOURLY,updatedService.getHour());
-//        db.update(TABLE_SERVICE,values,COLUMN_SERVICE+"=" +oldService.getService(),null);
-//        db.close();
         String query="Select * FROM "+TABLE_SERVICE+" WHERE "+COLUMN_SERVICE+
                 " = \"" +oldService.getService()+ "\"";
         Cursor cursor= db.rawQuery(query,null);
@@ -167,7 +199,11 @@ public class MyDBHandler extends SQLiteOpenHelper {
             users.setUser(cursor.getString(1));
             users.setPass(cursor.getString(2));
             users.setFirst(cursor.getString(3));
-            users.setRole(cursor.getString(4));
+            users.setLast(cursor.getString(4));
+            users.setStreet(cursor.getString(5));
+            users.setPostal(cursor.getString(6));
+            users.setCity(cursor.getString(7));
+            users.setRole(cursor.getString(8));
             cursor.close();
         }
         else{
@@ -178,4 +214,51 @@ public class MyDBHandler extends SQLiteOpenHelper {
         return users;
     }
 
+    public boolean isServiceCompleted(Users user){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user.getUser()+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            int id=(cursor.getInt(0));
+            cursor.close();
+            String query2="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \" " + id + "\"";
+            Cursor cursor2= db.rawQuery(query2,null);
+            if(cursor2.moveToFirst()){
+                System.out.println("found");
+                String completed=(cursor2.getString(1));
+                cursor2.close();
+                return Boolean.parseBoolean(completed);
+            }
+            System.out.println("notfound");
+        }
+
+        db.close();
+
+        return false;
+
+    }
+
+    public void completedForm(Users users){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +users.getUser()+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            int id=(cursor.getInt(0));
+            cursor.close();
+            String query2="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \" " + id + "\"";
+            Cursor cursor2= db.rawQuery(query2,null);
+            if(cursor2.moveToFirst()){
+                ContentValues values=new ContentValues();
+                values.put(COLUMN_COMPLETED,"true");
+                String idStr=cursor2.getString(0);
+                System.out.println("found");
+                db.update(TABLE_SERVICE_PROVIDER,values,COLUMN_ID +" = "+idStr,null);
+                cursor2.close();
+            }
+        }
+        db.close();
+
+    }
 }
