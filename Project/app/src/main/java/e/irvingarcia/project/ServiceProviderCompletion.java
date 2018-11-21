@@ -30,8 +30,15 @@ public class ServiceProviderCompletion extends AppCompatActivity {
         setContentView(R.layout.activity_service_provider);
         String users=extras.getString("users");
         String pass=extras.getString("pass");
+
         MyDBHandler dbHandler=new MyDBHandler(this);
         temp=dbHandler.getProfile(users,pass);
+        if(users.equals("null")&& pass.equals("null")){
+            temp=new Users();
+            temp.setCity("");
+            temp.setPostal("");
+            temp.setStreet("");
+        }
 
         streetBox=(EditText)findViewById(R.id.editStreetS);
         cityBox=(EditText)findViewById(R.id.editCityS);
