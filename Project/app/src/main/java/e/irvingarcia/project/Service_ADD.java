@@ -24,7 +24,7 @@ import java.util.Calendar;
 public class Service_ADD extends AppCompatActivity {
     ListView add;
     List<Service> services;
-    private DatePickerDialog.OnDateSetListener mDateSetListener;
+
     Users user;
 
     @Override
@@ -74,5 +74,6 @@ public class Service_ADD extends AppCompatActivity {
     public void buttonFinish(View view){
         finish();
     }
+
 
 }

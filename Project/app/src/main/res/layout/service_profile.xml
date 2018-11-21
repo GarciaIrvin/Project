@@ -84,5 +84,18 @@
             android:layout_height="wrap_content"
             android:onClick="addService"
             android:text="Add Services" />
+
+        <ListView
+            android:id="@+id/schdules"
+            android:layout_width="match_parent"
+            android:layout_height="140dp" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="addSchedule"
+            android:text="Add Time" />
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

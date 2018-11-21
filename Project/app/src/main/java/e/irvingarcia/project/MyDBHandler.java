@@ -29,6 +29,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public static final String COLUMN_PHONE="phone";
     public static final String COLUMN_COMPANY="company";
     public static final String COLUMN_DESCRIPTION="description";
+    public static final String COLUMN_DATE="date";
+    public static final String COLUMN_TIME="time";
 
 
     public static final String TABLE_SERVICE = "services";
@@ -55,6 +57,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
                 + COLUMN_ID + " INTEGER PRIMARY KEY,"+ COLUMN_COMPLETED+ " TEXT,"+
                 COLUMN_USER_ID+ " INTEGER,"+ COLUMN_COMPANY+ " TEXT2,"+ COLUMN_PHONE+ " TEXT3,"+
                 COLUMN_DESCRIPTION+ " TEXT4,"+ COLUMN_SERVICE+ " TEXT5,"+ COLUMN_HOURLY+ " TEXT6,"+
+                COLUMN_DATE+ " TEXT7,"+ COLUMN_TIME+ " TEXT8,"+
                 " FOREIGN KEY ("+COLUMN_USER_ID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USER_ID+"));";
         db.execSQL(CREATE_SERVICE_PROVIDER_TABLE);
 
@@ -436,6 +439,56 @@ public class MyDBHandler extends SQLiteOpenHelper {
             }
         }
         cursor.close();
+        db.close();
+
+    }
+
+    public ArrayList<String> getTime(int id){
+        ArrayList<String> temp=new ArrayList<String>();
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \"" +id+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        if(cursor.moveToFirst()){
+            String schedule =cursor.getString(8);
+            String time=cursor.getString(9);
+            if(schedule==null){
+                return temp;
+            }
+            String[] listSchedule=schedule.split(",");
+            String[] listTime=time.split(",");
+            int k=0;
+            for(int i=0;i<listSchedule.length;i++){
+                String tempVar;
+                tempVar = listSchedule[i] +","+ listTime[k]+"," + listTime[k+1];
+                k=k+2;
+                temp.add(tempVar);
+            }
+        }
+        return temp;
+    }
+    public void addTime(int id,String date, String start,String end){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \"" +id+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        String scheduleFinal;
+        String timeFinal;
+        if(cursor.moveToFirst()){
+            String schedule =cursor.getString(8);
+            String time=cursor.getString(9);
+            if (schedule == null) {
+                scheduleFinal=date;
+                timeFinal=start+","+end;
+            }
+            else{
+                scheduleFinal=date+","+schedule;
+                timeFinal=start+","+end+","+time;
+            }
+            ContentValues values=new ContentValues();
+            values.put(COLUMN_DATE,scheduleFinal);
+            values.put(COLUMN_TIME,timeFinal);
+            db.update(TABLE_SERVICE_PROVIDER,values,COLUMN_USER_ID + " = "+id,null);
+            cursor.close();
+        }
         db.close();
 
     }
