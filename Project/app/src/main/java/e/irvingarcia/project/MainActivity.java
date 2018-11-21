@@ -61,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(intent, 0);
                     dbHandler.close();
                 }
+                else{
+                    Intent intent = new Intent(getApplicationContext(), Service_Profile.class);
+                    intent.putExtra("users", temp.getUser());
+                    intent.putExtra("pass", temp.getPass());
+                    startActivityForResult(intent, 0);
+                }
             }
             else{
                 Intent intent = new Intent(getApplicationContext(), Welcome.class);
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             viewStatus.setText("No Match Found");
         }
+        dbHandler.close();
     }
 
 }

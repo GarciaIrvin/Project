@@ -19,7 +19,9 @@
         <activity android:name=".UserCreate" />
         <activity android:name=".Welcome" />
         <activity android:name=".ServiceCreation" />
-        <activity android:name=".ServiceProviderCompletion"></activity>
+        <activity android:name=".ServiceProviderCompletion" />
+        <activity android:name=".Service_Profile" />
+        <activity android:name=".Service_ADD"></activity>
     </application>
 
 </manifest>

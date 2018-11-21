@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import java.sql.Array;
+import java.util.ArrayList;
+
 public class MyDBHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "usersDB.db";
@@ -23,6 +26,10 @@ public class MyDBHandler extends SQLiteOpenHelper {
     public static final String TABLE_SERVICE_PROVIDER = "service_provider";
     public static final String COLUMN_COMPLETED="completed";
     public static final String COLUMN_USER_ID="user_id";
+    public static final String COLUMN_PHONE="phone";
+    public static final String COLUMN_COMPANY="company";
+    public static final String COLUMN_DESCRIPTION="description";
+
 
     public static final String TABLE_SERVICE = "services";
     public static final String COLUMN_SERVICE="service";
@@ -46,7 +53,9 @@ public class MyDBHandler extends SQLiteOpenHelper {
         String CREATE_SERVICE_PROVIDER_TABLE="CREATE TABLE " +
                 TABLE_SERVICE_PROVIDER + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY,"+ COLUMN_COMPLETED+ " TEXT,"+
-                COLUMN_USER_ID+ " INTEGER,"+ " FOREIGN KEY ("+COLUMN_USER_ID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USER_ID+"));";
+                COLUMN_USER_ID+ " INTEGER,"+ COLUMN_COMPANY+ " TEXT2,"+ COLUMN_PHONE+ " TEXT3,"+
+                COLUMN_DESCRIPTION+ " TEXT4,"+ COLUMN_SERVICE+ " TEXT5,"+ COLUMN_HOURLY+ " TEXT6,"+
+                " FOREIGN KEY ("+COLUMN_USER_ID+") REFERENCES "+TABLE_USERS+"("+COLUMN_USER_ID+"));";
         db.execSQL(CREATE_SERVICE_PROVIDER_TABLE);
 
         String CREATE_SERVICE_TABLE = "CREATE TABLE " +
@@ -63,6 +72,8 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SERVICE);
         onCreate(db);
     }
+
+
     public void addUser(Users user){
         SQLiteDatabase db= this.getWritableDatabase();
         ContentValues values=new ContentValues();
@@ -80,20 +91,49 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addServiceProvider(Users user){
+    public Users getProfile(String user, String pass){
         SQLiteDatabase db= this.getReadableDatabase();
-        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user.getUser()+ "\"";
+        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user+ "\"";
         Cursor cursor= db.rawQuery(query,null);
-
+        Users users=new Users();
         if(cursor.moveToFirst()){
-            int id=(cursor.getInt(0));
+            users.setUser(cursor.getString(1));
+            users.setPass(cursor.getString(2));
+            users.setFirst(cursor.getString(3));
+            users.setLast(cursor.getString(4));
+            users.setStreet(cursor.getString(5));
+            users.setPostal(cursor.getString(6));
+            users.setCity(cursor.getString(7));
+            users.setRole(cursor.getString(8));
             cursor.close();
-            ContentValues values=new ContentValues();
-            values.put(COLUMN_USER_ID,id);
-            values.put(COLUMN_COMPLETED,"false");
-            db.insert(TABLE_SERVICE_PROVIDER,null,values);
         }
+        else{
+            users=null;
+        }
+
         db.close();
+        return users;
+    }
+
+    public boolean findUser(String user, String pass){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        Users users=new Users();
+        if(cursor.moveToFirst()){
+            String userRetrieve=(cursor.getString(1));
+            String userPassword=cursor.getString(2);
+            cursor.close();
+            if(!userPassword.equals(pass)){
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+
+        db.close();
+        return true;
     }
 
     public void addAdmin(Admin admin){
@@ -108,6 +148,9 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.insert(TABLE_USERS,null,values);
         db.close();
     }
+
+
+
     public void addService(Service newService){
         SQLiteDatabase db= this.getWritableDatabase();
         ContentValues values=new ContentValues();
@@ -116,6 +159,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         db.insert(TABLE_SERVICE,null,values);
         db.close();
     }
+
     public Service findService(String service){
         SQLiteDatabase db= this.getReadableDatabase();
         String query="Select * FROM "+TABLE_SERVICE+" WHERE "+COLUMN_SERVICE+ " = \"" +service+ "\"";
@@ -134,6 +178,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         return newService;
 
     }
+
     public void updateService(Service updatedService,Service oldService){
         SQLiteDatabase db= this.getWritableDatabase();
         ContentValues values=new ContentValues();
@@ -170,49 +215,6 @@ public class MyDBHandler extends SQLiteOpenHelper {
     }
 
 
-    public boolean findUser(String user, String pass){
-        SQLiteDatabase db= this.getReadableDatabase();
-        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user+ "\"";
-        Cursor cursor= db.rawQuery(query,null);
-        Users users=new Users();
-        if(cursor.moveToFirst()){
-            String userRetrieve=(cursor.getString(1));
-            String userPassword=cursor.getString(2);
-            cursor.close();
-            if(!userPassword.equals(pass)){
-                return false;
-            }
-        }
-        else{
-            return false;
-        }
-
-        db.close();
-        return true;
-    }
-    public Users getProfile(String user, String pass){
-        SQLiteDatabase db= this.getReadableDatabase();
-        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user+ "\"";
-        Cursor cursor= db.rawQuery(query,null);
-        Users users=new Users();
-        if(cursor.moveToFirst()){
-            users.setUser(cursor.getString(1));
-            users.setPass(cursor.getString(2));
-            users.setFirst(cursor.getString(3));
-            users.setLast(cursor.getString(4));
-            users.setStreet(cursor.getString(5));
-            users.setPostal(cursor.getString(6));
-            users.setCity(cursor.getString(7));
-            users.setRole(cursor.getString(8));
-            cursor.close();
-        }
-        else{
-            users=null;
-        }
-
-        db.close();
-        return users;
-    }
 
     public boolean isServiceCompleted(Users user){
         SQLiteDatabase db= this.getReadableDatabase();
@@ -239,7 +241,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
 
     }
 
-    public void completedForm(Users users){
+    public void completedForm(Users users,ServiceProvider serv){
         SQLiteDatabase db= this.getReadableDatabase();
         String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +users.getUser()+ "\"";
         Cursor cursor= db.rawQuery(query,null);
@@ -247,17 +249,193 @@ public class MyDBHandler extends SQLiteOpenHelper {
         if(cursor.moveToFirst()){
             int id=(cursor.getInt(0));
             cursor.close();
+            ContentValues val=new ContentValues();
+            val.put(COLUMN_STREET, users.getStreet());
+            val.put(COLUMN_POSTAL,users.getPostal());
+            val.put(COLUMN_CITY,users.getCity());
+            db.update(TABLE_USERS,val,COLUMN_ID+" = "+id,null);
+
             String query2="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \" " + id + "\"";
             Cursor cursor2= db.rawQuery(query2,null);
             if(cursor2.moveToFirst()){
                 ContentValues values=new ContentValues();
                 values.put(COLUMN_COMPLETED,"true");
+                values.put(COLUMN_PHONE, serv.getPhone());
+                values.put(COLUMN_COMPANY,serv.getCompany());
+                values.put(COLUMN_DESCRIPTION,serv.getDescription());
                 String idStr=cursor2.getString(0);
                 System.out.println("found");
                 db.update(TABLE_SERVICE_PROVIDER,values,COLUMN_ID +" = "+idStr,null);
                 cursor2.close();
             }
         }
+        db.close();
+
+    }
+
+    public void addServiceProvider(Users user){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user.getUser()+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            int id=(cursor.getInt(0));
+            cursor.close();
+            ContentValues values=new ContentValues();
+            values.put(COLUMN_USER_ID,id);
+            values.put(COLUMN_COMPLETED,"false");
+            db.insert(TABLE_SERVICE_PROVIDER,null,values);
+        }
+        db.close();
+    }
+
+    public ServiceProvider getServiceProvider(int user_id){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \" " + user_id + "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        ServiceProvider temp=new ServiceProvider();
+        if(cursor.moveToFirst()){
+            temp.setCompany(cursor.getString(3));
+            temp.setPhone(cursor.getString(4));
+            temp.setDescription(cursor.getString(5));
+        }
+        return temp;
+    }
+
+    public int getUserID(Users user){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_USERS+" WHERE "+COLUMN_USERNAME+ " = \"" +user.getUser()+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        if(cursor.moveToFirst()){
+            int id=(cursor.getInt(0));
+            cursor.close();
+            return id;
+        }
+        return 0;
+    }
+
+    public ArrayList<Service> getServices(){
+        ArrayList<Service> temp=new ArrayList<Service>();
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_SERVICE;
+        Cursor cursor= db.rawQuery(query,null);
+        System.out.println("i found");
+        if(cursor.moveToFirst()) {
+            Service temp2 = new Service();
+            temp2.setService(cursor.getString(1));
+            temp2.setHour(Double.parseDouble(cursor.getString(2)));
+            temp.add(temp2);
+            while (cursor.moveToNext()) {
+                System.out.println("i found");
+                Service temp3 = new Service();
+                temp3.setService(cursor.getString(1));
+                temp3.setHour(Double.parseDouble(cursor.getString(2)));
+                temp.add(temp3);
+            }
+        }
+        return temp;
+    }
+
+    public void addServicetoAccount(int id, Service service){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \" " +id+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        String serviceFinal;
+        String hourFinal;
+        if(cursor.moveToFirst()){
+            String serviceTemp=cursor.getString(6);
+            String serviceHour=cursor.getString(7);
+            if(serviceTemp == null) {
+                serviceFinal = service.getService();
+                hourFinal=Double.toString(service.getHour());
+            }
+            else {
+                serviceFinal = service.getService() + "," + serviceTemp;
+                hourFinal= Double.toString(service.getHour()) + "," + serviceHour;
+            }
+            ContentValues values=new ContentValues();
+            values.put(COLUMN_SERVICE,serviceFinal);
+            values.put(COLUMN_HOURLY,hourFinal);
+            db.update(TABLE_SERVICE_PROVIDER,values,COLUMN_USER_ID + " = "+id,null);
+            cursor.close();
+        }
+        db.close();
+    }
+
+    public ArrayList<Service> getServicesProfile(int id){
+        ArrayList<Service> temp=new ArrayList<Service>();
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \"" +id+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        if(cursor.moveToFirst()){
+            String services=cursor.getString(6);
+            String hour=cursor.getString(7);
+            cursor.close();
+            if(services==null){
+                return temp;
+            }
+            String[] tempService=services.split(",");
+            String[] tempHour=hour.split(",");
+            for(int i=0;i<tempService.length;i++){
+                Service tempVar=new Service();
+                tempVar.setService(tempService[i]);
+                tempVar.setHour(Double.parseDouble(tempHour[i]));
+                temp.add(tempVar);
+            }
+        }
+        else{
+            return null;
+        }
+        db.close();
+        return temp;
+    }
+
+    public void deleteServicefromAccount(int id,Service serv){
+        SQLiteDatabase db= this.getReadableDatabase();
+        String query="Select * FROM "+TABLE_SERVICE_PROVIDER+" WHERE "+COLUMN_USER_ID+ " = \" " +id+ "\"";
+        Cursor cursor= db.rawQuery(query,null);
+        String tempService=serv.getService();
+        //Double tempHour=serv.getHour();
+        if(cursor.moveToFirst()){
+            String serviceTemp=cursor.getString(6);
+            String serviceHour=cursor.getString(7);
+            String[] serviceList=serviceTemp.split(",");
+            String[] hourList=serviceHour.split(",");
+            ArrayList<String> newServiceList=new ArrayList<String>();
+            ArrayList<String> newHourList=new ArrayList<String>();
+            if(serviceList.length==1){
+                ContentValues values = new ContentValues();
+                values.putNull(COLUMN_SERVICE);
+                values.putNull(COLUMN_HOURLY);
+                db.update(TABLE_SERVICE_PROVIDER, values, COLUMN_USER_ID + " = " + id, null);
+            }
+
+            int found=0;
+            for(int i=0;i<serviceList.length;i++){
+                if(serviceList[i].equals(tempService)){
+                    found=i;
+                }
+            }
+            for(int i=0;i<serviceList.length;i++){
+                if(i!=found){
+                    newServiceList.add(serviceList[i]);
+                    newHourList.add(hourList[i]);
+                }
+            }
+            if(newServiceList.size()>0) {
+                String newString = newServiceList.get(0);
+                String newHour = newHourList.get(0);
+                for (int i = 1; i < newServiceList.size(); i++) {
+                    newString = newString + "," + newServiceList.get(i);
+                    newHour = newHour + "," + newHourList.get(i);
+                }
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_SERVICE, newString);
+                values.put(COLUMN_HOURLY, newHour);
+                db.update(TABLE_SERVICE_PROVIDER, values, COLUMN_USER_ID + " = " + id, null);
+            }
+        }
+        cursor.close();
         db.close();
 
     }
