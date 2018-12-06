@@ -70,20 +70,6 @@ public class Service_Profile extends AppCompatActivity {
 
         service=(ListView)findViewById(R.id.listViewP);
         schedules=(ListView)findViewById(R.id.schdules);
-//        final ArrayList<Service> serviceTemp=dbHandler.getServicesProfile(dbHandler.getUserID(temp));
-//        services=serviceTemp;
-//        serviceList=new ServiceList(this,services);
-//        service.setAdapter(serviceList);
-//
-//
-//        service.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                Service serv = services.get(i);
-//                showUpdateDeleteDialog(serv);
-//                return true;
-//            }
-//        });
         dbHandler.close();
     }
 
@@ -199,15 +185,15 @@ public class Service_Profile extends AppCompatActivity {
         timeListener=new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                String time=hourOfDay+":"+minute;
-                editStart.setText(time);
+                //String time=hourOfDay+":"+minute;
+                editStart.setText(String.format("%02d:%02d", hourOfDay, minute));
             }
         };
         timeListenerEnd=new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                String time=hourOfDay+":"+minute;
-                editEnd.setText(time);
+                //String time=hourOfDay+":"+minute;
+                editEnd.setText(String.format("%02d:%02d", hourOfDay, minute));
             }
         };
 

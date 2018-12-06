@@ -21,7 +21,8 @@
         <activity android:name=".ServiceCreation" />
         <activity android:name=".ServiceProviderCompletion" />
         <activity android:name=".Service_Profile" />
-        <activity android:name=".Service_ADD"></activity>
+        <activity android:name=".Service_ADD" />
+        <activity android:name=".SearchHomeOwner"></activity>
     </application>
 
 </manifest>

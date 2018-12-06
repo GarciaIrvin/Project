@@ -21,6 +21,11 @@ public class MainActivity extends AppCompatActivity {
         viewStatus=(TextView) findViewById(R.id.status);
 
         MyDBHandler dbHandler=new MyDBHandler(this);
+        if(dbHandler.findService("Service1")==null) {
+            dbHandler.presentationUseCase();
+            dbHandler.presentationUser();
+        }
+
         boolean flag=dbHandler.findUser("admin","admin");
 
         if(!flag) {
@@ -70,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
             }
             else{
                 Intent intent = new Intent(getApplicationContext(), Welcome.class);
-                intent.putExtra("users", temp.getFirst());
-                intent.putExtra("role", temp.getRole());
+                intent.putExtra("users", temp.getUser());
+                intent.putExtra("pass", temp.getPass());
                 startActivityForResult(intent, 0);
                 dbHandler.close();
             }
